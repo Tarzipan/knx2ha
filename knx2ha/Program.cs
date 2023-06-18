@@ -47,6 +47,7 @@ namespace knx2ha
                 }
             }
             // Verwendeter YAML-Dateipfad
+            if(yamlFilePath == null)
             yamlFilePath = "output.yaml";
 
             if (knxprojFilePath == null || yamlFilePath == null)
@@ -76,6 +77,8 @@ namespace knx2ha
             else
                 GenerateYamlConfig(devices.Where(d => d.Type != DeviceType.Unknown).ToList(), yamlFilePath);
 
+            DeleteExtractedFolder(knxprojFilePath);
+
             Console.WriteLine("YAML-Konfiguration wurde erfolgreich erstellt.");
             Console.ReadLine();
         }
@@ -99,6 +102,22 @@ namespace knx2ha
             {
                 Console.WriteLine("Fehler beim Extrahieren der KNXPROJ-Datei: " + ex.Message);
                 return null;
+            }
+        }
+        static void DeleteExtractedFolder(string knxprojFilePath)
+        {
+            string extractedFolderPath = Path.Combine(Path.GetDirectoryName(knxprojFilePath), "Extracted");
+
+            try
+            {
+                if (Directory.Exists(extractedFolderPath))
+                {
+                    Directory.Delete(extractedFolderPath, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Fehler beim löschen des Ordners: " + ex.Message);
             }
         }
 
